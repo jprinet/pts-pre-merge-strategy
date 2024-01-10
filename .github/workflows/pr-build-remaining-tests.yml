@@ -21,7 +21,7 @@ jobs:
           distribution: 'temurin'
       - name: Set up Gradle Build Action
         uses: gradle/gradle-build-action@v2
-      - name: Build with Gradle
+      - name: Build with PTS (remaining tests)
         run: ./gradlew build -Dpts.mode=REMAINING_TESTS
       - name: Update status check for Build with remaining tests
         if: always()
