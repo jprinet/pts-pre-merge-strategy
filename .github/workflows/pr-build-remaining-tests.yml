@@ -26,10 +26,11 @@ jobs:
       - name: Update status check for Build with remaining tests
         if: always()
         run: |
-          sha=$(git log --format=%H -n 1)
+          sha=$(git rev-parse HEAD)
+          echo "Updating status for commit $sha"
           curl \
             --request POST \
-            --url https://api.github.com/repos/${{ github.repository }}/statuses/${sha} \
+            --url https://api.github.com/repos/${{ github.repository }}/statuses/$sha \
             --header 'content-type: application/json' \
             --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
             --data '{
