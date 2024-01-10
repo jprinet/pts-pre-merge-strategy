@@ -1,15 +1,19 @@
 name: PR Build with remaining tests
 
 on:
-  workflow_dispatch:
+  issue_comment:
+    types:
+      - created
 
 jobs:
   build:
-    name: Build
+    if: github.event.issue.pull_request && github.event.comment.body == 'Build with remaining tests'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
+        with:
+          ref: "refs/pull/${{ github.event.issue.number }}/head"
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -26,7 +30,7 @@ jobs:
           lowercase_status=$(echo $status | tr '[:upper:]' '[:lower:]')
           curl \
             --request POST \
-            --url https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} \
+            --url https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.event.workflow_run.head_commit.id }} \
             --header 'content-type: application/json' \
             --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
             --data '{
