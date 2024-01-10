@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: "refs/pull/${{ github.event.issue.number }}/head"
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -26,15 +26,14 @@ jobs:
       - name: Update status check for Build with remaining tests
         if: always()
         run: |
-          status="${{ job.status }}"
-          lowercase_status=$(echo $status | tr '[:upper:]' '[:lower:]')
+          sha=$(git log --format=%H -n 1)
           curl \
             --request POST \
-            --url https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.event.workflow_run.head_commit.id }} \
+            --url https://api.github.com/repos/${{ github.repository }}/statuses/${sha} \
             --header 'content-type: application/json' \
             --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
             --data '{
-              "state": "'$lowercase_status'",
+              "state": "${{ job.status }}"
               "context": "Build With Remaining Tests", 
               "description": "Run PTS remaining tests before merge" 
               }'
