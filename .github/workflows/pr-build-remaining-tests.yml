@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     if: github.event.issue.pull_request && github.event.comment.body == 'Build with remaining tests'
+    permissions:
+      statuses: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
