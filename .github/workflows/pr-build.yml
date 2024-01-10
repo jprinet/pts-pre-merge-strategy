@@ -1,4 +1,4 @@
-name: Run Gradle Build
+name: PR Build
 
 on:
   pull_request:
@@ -6,9 +6,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 17
@@ -31,4 +29,4 @@ jobs:
             "description": "Run PTS remaining tests before merge" 
             }'
     - name: Build with PTS (relevant tests)
-      run: ./gradlew build -PenablePTS
+      run: ./gradlew build -Dpts.enabled=true
